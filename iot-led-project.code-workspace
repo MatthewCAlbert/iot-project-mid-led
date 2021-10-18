@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"name": "root",
+			"path": "."
+		},
+		{
+			"name": "embedded",
+			"path": "embedded"
+		},
+		{
+			"name": "server",
+			"path": "server"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"embedded": true,
+			"server": true
+		}
+	},
+}

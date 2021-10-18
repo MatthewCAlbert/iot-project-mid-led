@@ -1,0 +1,5 @@
+{
+  "verbose": true,
+  "ignore": ["node_modules", "src", "db", "test"],
+  "ext": "js json"
+}

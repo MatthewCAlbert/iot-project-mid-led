@@ -1,0 +1,21 @@
+{
+   "type": "sqlite",
+   "driver": "",
+   "database": "./db/app.sqlite",
+   "synchronize": true,
+   "logging": true,
+   "entities": [
+      "src/data/entities/**/*.ts"
+   ],
+   "migrations": [
+      "src/data/migrations/**/*.ts"
+   ],
+   "subscribers": [
+      "src/data/subscribers/**/*.ts"
+   ],
+   "cli": {
+      "entitiesDir": "src/data/entities",
+      "migrationsDir": "src/data/migrations",
+      "subscribersDir": "src/data/subscribers"
+   }
+}
