@@ -14,8 +14,8 @@
       "dist/data/migrations/**/*.js"
    ],
    "cli": {
-      "entitiesDir": "dist/data/entities",
-      "migrationsDir": "dist/data/migrations",
-      "subscribersDir": "dist/data/subscribers"
+      "entitiesDir": "src/data/entities",
+      "migrationsDir": "src/data/migrations",
+      "subscribersDir": "src/data/subscribers"
    }
 }
