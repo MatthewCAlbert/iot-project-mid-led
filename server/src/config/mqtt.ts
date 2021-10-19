@@ -1,4 +1,5 @@
 import mqtt from "mqtt";
+import config from "./config";
 
 class MqttHandler {
   mqttClient: mqtt.MqttClient;
@@ -8,9 +9,9 @@ class MqttHandler {
 
   constructor() {
     this.mqttClient = null;
-    this.host = "mqtt://" + process.env.MQTT_HOST;
-    this.username = process.env.MQTT_USER;
-    this.password = process.env.MQTT_PASSWORD;
+    this.host = "mqtt://" + config.mqtt.host;
+    this.username = config.mqtt.username;
+    this.password = config.mqtt.password;
   }
 
   connect() {

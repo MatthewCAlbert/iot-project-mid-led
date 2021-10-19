@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import {getRepository, MigrationInterface, QueryRunner} from "typeorm";
-import utils from "../../lib/utils";
+import utils from "../../utils/jwt";
 import { User } from "../entities/user.entity";
 
 export class generateAndSeedUsersTable1634564386085 implements MigrationInterface {

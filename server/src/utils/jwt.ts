@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import jsonwebtoken from 'jsonwebtoken';
-import { PRIV_KEY } from './secrets';
+import config from '../config/config';
 
 /**
  * -------------- HELPER FUNCTIONS ----------------
@@ -50,14 +50,14 @@ function genPassword(password: string) {
 function issueJWT(user: any) {
   const _id = user._id;
 
-  const expiresIn = "1d";
+  const expiresIn = config.jwt.accessExpiration;
 
   const payload = {
     sub: _id,
     iat: Date.now(),
   };
 
-  const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, {
+  const signedToken = jsonwebtoken.sign(payload, config.jwt.secret, {
     expiresIn: expiresIn,
     algorithm: "RS256",
   });

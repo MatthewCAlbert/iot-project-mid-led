@@ -1,5 +1,6 @@
-import { Entity, Column } from "typeorm";
-import { BaseEntity } from "./base.entity";
+import { Entity, Column, OneToMany } from "typeorm";
+import BaseEntity from "./base.entity";
+import { Schedule } from "./schedule.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -14,4 +15,7 @@ export class User extends BaseEntity {
 
     @Column()
     salt: string;
+
+    @OneToMany(() => Schedule, schedule => schedule.user_id)
+    schedules: Schedule[];
 }

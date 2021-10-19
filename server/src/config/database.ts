@@ -1,5 +1,5 @@
 import { createConnection } from "typeorm";
-import logger from '../lib/logger';
+import logger from '../utils/logger';
 
 async function connect(){
   if( process.env.NODE_ENV !== "production" ){

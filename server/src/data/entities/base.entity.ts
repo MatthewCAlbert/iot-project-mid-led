@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
-import { CreateDateColumn,UpdateDateColumn, PrimaryColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { CreateDateColumn,UpdateDateColumn, PrimaryColumn, BeforeInsert, BeforeUpdate,BaseEntity } from 'typeorm';
 
-export abstract class BaseEntity {
+abstract class BaseModelEntity extends BaseEntity {
   @PrimaryColumn("varchar", {
     length: 21
   })
@@ -31,3 +31,5 @@ export abstract class BaseEntity {
     this.updated_at = new Date();
   }
 }
+
+export default BaseModelEntity;

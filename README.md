@@ -15,7 +15,10 @@
 
 ## TODO
 - [ ] Setup env pas build docker
-- [ ] Server not runnable yet still under construction
+- [ ] Scheduler
+- [ ] Schedule API
+- [ ] Test TypeORM migration build automation
+- [ ] Unit Testing
 
 ## Getting Started
 - Too many CLI command (just read the package.json)

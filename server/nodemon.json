@@ -1,5 +1,11 @@
 {
   "verbose": true,
-  "ignore": ["node_modules", "src", "db", "test"],
+  "ignore": [
+    "node_modules", 
+    "src", 
+    "db", 
+    "test", 
+    "dist/migrations"
+  ],
   "ext": "js json"
 }

@@ -1,87 +1,111 @@
 import express from "express";
-import utils from '../lib/utils';
+import httpStatus from "http-status";
+import { User } from "../data/entities/user.entity";
+import utils from '../utils/jwt';
+import ApiError from "../utils/ApiError";
+import ApiResponse from "../utils/ApiResponse";
 
 class AuthController {
 
-  static check(req: express.Request, res: express.Response): void {
-    res.status(200).json({success: true, data: req.user});
+  static check(req: express.Request, res: express.Response) {
+    return new ApiResponse(res, { message: "", 
+      data: req.user
+    });
   }
 
-  static login(req: express.Request, res: express.Response): void {
+  static login(req: express.Request, res: express.Response) {
     User.findOne({username: req.body.username})
     .then((user)=>{
       if(!user){
-        res.status(401).json({success:false, msg: "user not found"});
+        return new ApiError(httpStatus.UNAUTHORIZED, "user not found");
       }
 
       const isValid = utils.validPassword(req.body.password, user.hash, user.salt);
 
       if(isValid){
         const tokenObj = utils.issueJWT(user);
-
-        res.status(200).json({success:true, data:user, token: tokenObj.token, expiresIn: tokenObj.expires});
+        return new ApiResponse(res, { message: "", 
+          data: { 
+            user, 
+            token: tokenObj.token, 
+            expiresIn: tokenObj.expires 
+          } 
+        });
       }else
-        res.status(401).json({success:false, data: null, expiresIn: null, token: null, message: "wrong password"});
+        return new ApiError(httpStatus.UNAUTHORIZED, "wrong password");
     })
     .catch(err=>res.status(500).json({success:false, error: err}));
   }
 
-  static logout(req: express.Request, res: express.Response): void {
-    // TODO: Invalidate JWT
-   res.send("Hello World!"); 
-  }
-
-  static changePassword(req: express.Request, res: express.Response): void {
+  static async changePassword(req: express.Request, res: express.Response) {
     let user = req.user;
 
     const isValid = utils.validPassword(req.body.oldPassword, user.hash, user.salt);
 
     if( !isValid ){
-      res.status(401).json({success:false, data: null, token: null});
-      return;
+      return new ApiError(httpStatus.UNAUTHORIZED, "Password identity mismatch");
     }
 
     const saltHash = utils.genPassword(req.body.newPassword);
     const salt = saltHash.salt;
     const hash = saltHash.hash;
-    const update = {salt, hash};
 
-    User.findOneAndUpdate({_id: user._id}, update)
-    .then((userUpdated) => {
-      const tokenObj = utils.issueJWT(userUpdated);
-      res.status(200).json({success:true, data:user, token: tokenObj.token, expiresIn: tokenObj.expires});
+    try {
+      const c_user = await User.findOne( {id: user.id} );
+      c_user.salt = salt;
+      c_user.hash = hash;
+      if ( await c_user.save() ){
+        const tokenObj = utils.issueJWT(c_user);
+        return new ApiResponse(res, { message: "", 
+          data: { 
+            user, 
+            token: tokenObj.token, 
+            expiresIn: tokenObj.expires 
+          } 
+        });
+      }
+    } catch (error) {
+      return new ApiError(httpStatus.UNAUTHORIZED, "Password change failed");
     }
-    )
-    .catch(err=>res.status(500).json({success:false, message:"Password change failed", error: err}));
   }
 
-  static destory(req: express.Request, res: express.Response): void {
-   const {username} = req.params;
-    User.findOneAndDelete({username: username}).then(() =>
-      res.status(200).json({success: true, message: "User deleted!"})
-    )
-    .catch(err=>res.status(500).json({success:false, message:"Failed", error: err}));
+  static async destory(req: express.Request, res: express.Response) {
+    const {id} = req.params;
+    try {
+      const response = await User.delete({ id: id });
+      return new ApiResponse(res, { statusCode: httpStatus.ACCEPTED, message: "User deleted" })
+    } catch (error) {
+      return new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Password change failed");
+    }
   }
 
-  static register(req: express.Request, res: express.Response): void {
+  static async register(req: express.Request, res: express.Response) {
    const saltHash = utils.genPassword(req.body.password);
 
    const salt = saltHash.salt;
    const hash = saltHash.hash;
 
-   const newUser = new User({
-    username: req.body.username,
-    hash: hash,
-    salt: salt,
-   });
+   try {
+    const newUser = new User();
+    newUser.name = req.body.name;
+    newUser.username = req.body.username;
+    newUser.hash = hash;
+    newUser.salt = salt;
 
-   newUser.save()
-   .then(user=>{
-    const jwt = utils.issueJWT(user);
+    await newUser.save();
 
-     res.json({success: true, data: user, token: jwt.token, expiresIn: jwt.expires})
-   })
-    .catch(err=>res.status(500).json({success:false, data: null, error: err}));
+    const tokenObj = utils.issueJWT(newUser);
+    return new ApiResponse(res, { message: "", 
+      data: { 
+        user: newUser, 
+        token: tokenObj.token, 
+        expiresIn: tokenObj.expires 
+      } 
+    });
+   } catch (error) {
+    return new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Register Failed");
+   }
+
   }
 }
 

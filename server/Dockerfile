@@ -1,17 +1,29 @@
-FROM node:14-alpine as node-version
+ARG BUILD_ENV
 
-FROM node-version as builder
+FROM node:alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
-WORKDIR /usr/src/app
 
-RUN yarn install --production
-
+FROM node:alpine AS builder
+WORKDIR /app
 COPY . .
+COPY --from=deps /app/node_modules ./node_modules
+RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
 
-FROM node-version
-WORKDIR /usr/src/app
 
-COPY --from=builder /usr/src/app .
+FROM node:alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+COPY --from=builder /app/ormconfig.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 5000
-CMD ["yarn", "run", "start"]
+
+CMD ["yarn", "start"]

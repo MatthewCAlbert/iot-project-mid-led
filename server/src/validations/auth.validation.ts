@@ -6,6 +6,7 @@ const authSchemas = {
     password: Joi.string().required(),
   }),
   register: Joi.object({
+    name: Joi.string().required(),
     username: Joi.string().required(),
     password: Joi.string().required(),
   }),
