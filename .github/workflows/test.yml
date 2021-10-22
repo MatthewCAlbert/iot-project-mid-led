@@ -31,6 +31,8 @@ jobs:
           node-version: 14.x
 
       - uses: c-hive/gha-yarn-cache@v2
+        with:
+          directory: server
 
       - name: Install JS dependencies
         run: yarn install --frozen-lockfile
