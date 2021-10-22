@@ -6,7 +6,14 @@ const scheduleRouter = express.Router();
 scheduleRouter.use(jwtTokenMiddleware);
 
 // Schedule
-scheduleRouter.get("/schedule", jwtTokenMiddleware, null);
-scheduleRouter.get("/schedule", jwtTokenMiddleware, null);
+
+// All Schedule List
+scheduleRouter.get("/", null);
+
+// Create new schedule
+scheduleRouter.post("/", null);
+
+// Cancel a schedule
+scheduleRouter.delete("/:id", null);
 
 export default scheduleRouter;

@@ -4,17 +4,23 @@ import Joi from "joi";
 import ApiError from "../utils/ApiError";
 import pick from "../utils/pick";
 
-const validator = (schema: Joi.Schema) => { 
+type SchemaAccept = {
+  body?: Joi.Schema,
+  query?: Joi.Schema,
+  params?: Joi.Schema
+}
+
+const validator = (schema: SchemaAccept) => { 
   return (req: express.Request, res: express.Response, next: express.NextFunction) => { 
     const validSchema = pick(schema, ['params', 'query', 'body']);
     const object = pick(req, Object.keys(validSchema));
-    const { value, error } = Joi.compile(validSchema)
+    const { value, error } = Joi.compile(schema)
         .prefs({ errors: { label: 'key' } })
         .validate(object);
 
     if (error) {
         const errorMessage = error.details.map((details) => details.message).join(', ');
-        return next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
+        next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
     }
     Object.assign(req, value);
     return next();

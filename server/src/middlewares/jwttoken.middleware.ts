@@ -2,32 +2,33 @@ import jwt from 'jsonwebtoken';
 import express from 'express';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
+import { User } from '../data/entities/user.entity';
+import config from '../config/config';
+import { AuthJwtPayload } from '../utils/jwt';
 
 const jwtTokenMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  return new Promise( (resolve, reject)=>{
+  if(!req.headers.authorization)
+      return next(new ApiError(httpStatus.UNAUTHORIZED,"Token missing"));
+  if(!req.headers.authorization.startsWith("Bearer"))
+      return next(new ApiError(httpStatus.BAD_REQUEST,"Token malformed"));
+  
+  const authHeader = req.headers["authorization"];
+  const token: string|undefined = authHeader && authHeader.split(" ")[1];
 
-    if(!req.headers.authorization)
-        return reject(new ApiError(httpStatus.FORBIDDEN,"Token missing"));
-    if(!req.headers.authorization.startsWith("Bearer"))
-        return reject(new ApiError(httpStatus.BAD_REQUEST,"Token malformed"));
-    
-    const authHeader = req.headers["authorization"];
-    const token: string|undefined = authHeader && authHeader.split(" ")[1];
-    
-    if (token === null) return res.sendStatus(401);
+  jwt.verify(String(token), config.jwt.secret, async (err, payload: AuthJwtPayload) => {
+    if (err){
+      return next(new ApiError(httpStatus.UNAUTHORIZED,"Token unauthorized"))
+    }
+    const fetchedUser = await User.findOne({id: payload?.sub});
 
-    jwt.verify(String(token), String(process.env.ACCESS_TOKEN_SECRET), (err, user) => {
-      if (err) reject(new ApiError(httpStatus.UNAUTHORIZED,"Token unauthorized"));
-      req.user = user;
+    if( fetchedUser ){
+      req.user = fetchedUser;
+      next();
+    }else{
+      next( new ApiError(httpStatus.UNAUTHORIZED,"User not found") );
+    }
 
-      // TODO: Verify user
-
-      resolve(true);
-    });
-
-  } )
-    .then(()=>next())
-    .catch((err)=>next(err));
+  });
 };
 
 export default jwtTokenMiddleware;

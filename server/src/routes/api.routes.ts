@@ -9,9 +9,12 @@ const apiRouter = express.Router();
 apiRouter.get("/", ApiController.helloWorldHandler);
 
 apiRouter.get("/users", ApiController.allUser);
-apiRouter.delete("/users/:id", AuthController.destory);
 apiRouter.delete("/all", ApiController.clearDb);
 
 apiRouter.get("/protected", jwtTokenMiddleware, ApiController.testAuth);
+
+// Device Related
+// apiRouter.get("/schedule/check", ApiController.allUser);
+// apiRouter.post("/device/command", jwtTokenMiddleware, ApiController.allUser);
 
 export default apiRouter;

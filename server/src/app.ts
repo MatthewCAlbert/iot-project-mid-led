@@ -17,8 +17,11 @@ import config from "./config/config";
 const app = express();
 
 // Setup
-app.set("port", process.env.PORT || 5000);
-app.set("env", process.env.NODE_ENV);
+app.set("port", (
+    config.env !== "testing" ? config.port.normal : config.port.test) 
+    || 5000
+);
+app.set("env", config.env);
 
 // Middleware
 app.use(helmet())
@@ -27,14 +30,18 @@ app.use(cors(corsOptions("*")))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // TODO: Currently disabled
 // MQTT Client
 // const mqttClient = new MqttHandler();
 // mqttClient.connect();
 
+// Handle Preflight
+// app.options("*", cors());
+app.options("*", (req, res)=>{
+    res.status(200).json({});
+});
+
 // Define Routes
-app.options('*', cors());
 app.use("/", router);
 
 // Attach public folder

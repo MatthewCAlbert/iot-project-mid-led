@@ -5,21 +5,18 @@
   "main": "./dist/server.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node .",
-    "watch-sass": "node-sass -w --recursive -o dist/public/css/ src/public/scss/",
-    "dev": "cross-env NODE_ENV=development concurrently \"npm:build:dev\" \"npm:start:dev\" \"npm:watch-sass\"",
-    "start:dev": "nodemon dist/server.js",
+    "watch-sass": "sass -w src/public/scss/:dist/public/css/",
+    "dev": "cross-env NODE_ENV=development concurrently \"ts-node-dev --respawn --transpile-only ./src/server.ts\" \"npm:watch-sass\"",
     "build-ts": "tsc",
-    "build": "cross-env NODE_ENV=production npm run build-ts && npm run build:sass && npm run copy-static-assets",
-    "build:dev": "cross-env NODE_ENV=development tsc --watch --preserveWatchOutput && npm run copy-static-assets",
-    "build:sass": "node-sass --output-style compressed --recursive -o dist/public/css/ src/public/scss/",
+    "build": "cross-env NODE_ENV=production npm run build-ts && npm run build:sass",
+    "build:dev": "cross-env NODE_ENV=development npm run build-ts && npm run build:sass",
+    "build:sass": "sass --style=compressed src/public/scss/:dist/public/css/",
     "typeorm:win": "ts-node ./node_modules/typeorm/cli.js",
     "migration:gen": "ts-node ./node_modules/.bin/typeorm migration:generate",
     "migration:run": "ts-node ./node_modules/.bin/typeorm migration:run",
     "migration:gen:win": "yarn run typeorm:win migration:generate",
     "migration:run:win": "yarn run typeorm:win migration:run",
-    "copy-static-assets": "ts-node copyStaticAssets.ts",
-    "key:generate": "node ./generateKeypair.js",
-    "test": "cross-env NODE_ENV=testing jest --coverage --verbose --forceExit --detectOpenHandles"
+    "test": "cross-env NODE_ENV=testing jest --silent=false --coverage --verbose --forceExit --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
@@ -64,6 +61,7 @@
     "supertest": "^6.1.3",
     "ts-jest": "^27.0.3",
     "ts-node": "^10.0.0",
+    "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.4"
   }
 }

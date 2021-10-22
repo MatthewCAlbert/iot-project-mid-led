@@ -1,6 +1,7 @@
 import crypto from 'crypto';
-import jsonwebtoken from 'jsonwebtoken';
+import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
 import config from '../config/config';
+import { User } from '../data/entities/user.entity';
 
 /**
  * -------------- HELPER FUNCTIONS ----------------
@@ -44,22 +45,25 @@ function genPassword(password: string) {
   };
 }
 
+export type AuthJwtPayload = JwtPayload & {
+  username: string
+}
+
 /**
  * @param {*} user - The user object.  We need this to set the JWT `sub` payload property to the MongoDB user ID
  */
-function issueJWT(user: any) {
-  const _id = user._id;
+function issueJWT(user: User) {
 
   const expiresIn = config.jwt.accessExpiration;
 
   const payload = {
-    sub: _id,
+    username: user.username,
+    sub: user.id,
     iat: Date.now(),
   };
 
   const signedToken = jsonwebtoken.sign(payload, config.jwt.secret, {
     expiresIn: expiresIn,
-    algorithm: "RS256",
   });
 
   return {

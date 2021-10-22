@@ -7,20 +7,32 @@ import ApiResponse from "../utils/ApiResponse";
 
 class AuthController {
 
-  static check(req: express.Request, res: express.Response) {
+  static sanitizeUserProfile( user: Record<string, any> ){
+    let sanitizedUser: Record<string, any> = {};
+    for( let key in user ){
+      if( !["hash", "salt"].includes(key) )
+        sanitizedUser[key] = user[key];
+    }
+    return sanitizedUser;
+  }
+
+  static profile(req: express.Request, res: express.Response) {
+    const user: User = req.user;
     return new ApiResponse(res, { message: "", 
-      data: req.user
+      data: {
+        user: AuthController.sanitizeUserProfile(user)
+      }
     });
   }
 
-  static login(req: express.Request, res: express.Response) {
+  static login(req: express.Request, res: express.Response, next: express.NextFunction) {
     User.findOne({username: req.body.username})
     .then((user)=>{
       if(!user){
-        return new ApiError(httpStatus.UNAUTHORIZED, "user not found");
+        return next(new ApiError(httpStatus.UNAUTHORIZED, "user not found"));
       }
 
-      const isValid = utils.validPassword(req.body.password, user.hash, user.salt);
+      const isValid = utils.validPassword(req?.body?.password, user?.hash, user?.salt);
 
       if(isValid){
         const tokenObj = utils.issueJWT(user);
@@ -32,18 +44,17 @@ class AuthController {
           } 
         });
       }else
-        return new ApiError(httpStatus.UNAUTHORIZED, "wrong password");
-    })
-    .catch(err=>res.status(500).json({success:false, error: err}));
+        return next(new ApiError(httpStatus.UNAUTHORIZED, "wrong password"));
+    });
   }
 
-  static async changePassword(req: express.Request, res: express.Response) {
+  static async changePassword(req: express.Request, res: express.Response, next: express.NextFunction) {
     let user = req.user;
 
     const isValid = utils.validPassword(req.body.oldPassword, user.hash, user.salt);
 
     if( !isValid ){
-      return new ApiError(httpStatus.UNAUTHORIZED, "Password identity mismatch");
+      return next(new ApiError(httpStatus.UNAUTHORIZED, "Password identity mismatch"));
     }
 
     const saltHash = utils.genPassword(req.body.newPassword);
@@ -65,21 +76,11 @@ class AuthController {
         });
       }
     } catch (error) {
-      return new ApiError(httpStatus.UNAUTHORIZED, "Password change failed");
+      return next(new ApiError(httpStatus.UNAUTHORIZED, "Password change failed"));
     }
   }
 
-  static async destory(req: express.Request, res: express.Response) {
-    const {id} = req.params;
-    try {
-      const response = await User.delete({ id: id });
-      return new ApiResponse(res, { statusCode: httpStatus.ACCEPTED, message: "User deleted" })
-    } catch (error) {
-      return new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Password change failed");
-    }
-  }
-
-  static async register(req: express.Request, res: express.Response) {
+  static async register(req: express.Request, res: express.Response, next: express.NextFunction) {
    const saltHash = utils.genPassword(req.body.password);
 
    const salt = saltHash.salt;
@@ -103,7 +104,7 @@ class AuthController {
       } 
     });
    } catch (error) {
-    return new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Register Failed");
+    return next(error);
    }
 
   }
