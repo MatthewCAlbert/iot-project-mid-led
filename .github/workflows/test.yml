@@ -43,7 +43,7 @@ jobs:
           variableNames: NODE_ENV,JWT_SECRET,JWT_ACCESS_EXPIRATION
 
       - name: Test
-        run: yarn run test --if-present
+        run: yarn run test
 
       - name: Build
         run: |
