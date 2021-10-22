@@ -20,7 +20,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     defaults:
       run:
-        working-directory: ./server
+        working-directory: server
 
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
       - uses: c-hive/gha-yarn-cache@v2
 
       - name: Install JS dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Prepare Environment
         uses: CallePuzzle/envvar-to-dotenv-action@v1.0.0
