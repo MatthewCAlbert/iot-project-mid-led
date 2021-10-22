@@ -1,7 +1,7 @@
 import express from "express";
 import { User } from "../data/entities/user.entity";
 import ApiError from "../utils/ApiError";
-import ApiResponse from "../utils/ApiResponse";
+import { sendResponse } from "../utils/api";
 
 class ApiController{
   static helloWorldHandler(req: express.Request, res: express.Response) {
@@ -9,7 +9,7 @@ class ApiController{
   }
 
   static testAuth(req: express.Request, res: express.Response) {
-    return new ApiResponse(res, {
+    return sendResponse(res, {
       data: "Ok"
     })
   }
@@ -17,7 +17,7 @@ class ApiController{
   static async allUser(req: express.Request, res: express.Response) {
     try {
       const result = await User.find();
-      return new ApiResponse(res, {
+      return sendResponse(res, {
         data: result
       })
     } catch (error) {

@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import { User } from "../data/entities/user.entity";
 import utils from '../utils/jwt';
 import ApiError from "../utils/ApiError";
-import ApiResponse from "../utils/ApiResponse";
+import {sendResponse} from "../utils/api";
 
 class AuthController {
 
@@ -18,7 +18,7 @@ class AuthController {
 
   static profile(req: express.Request, res: express.Response) {
     const user: User = req.user;
-    return new ApiResponse(res, { message: "", 
+    return sendResponse(res, { message: "", 
       data: {
         user: AuthController.sanitizeUserProfile(user)
       }
@@ -36,7 +36,7 @@ class AuthController {
 
       if(isValid){
         const tokenObj = utils.issueJWT(user);
-        return new ApiResponse(res, { message: "", 
+        return sendResponse(res, { message: "", 
           data: { 
             user, 
             token: tokenObj.token, 
@@ -67,7 +67,7 @@ class AuthController {
       c_user.hash = hash;
       if ( await c_user.save() ){
         const tokenObj = utils.issueJWT(c_user);
-        return new ApiResponse(res, { message: "", 
+        return sendResponse(res, { message: "", 
           data: { 
             user, 
             token: tokenObj.token, 
@@ -96,7 +96,7 @@ class AuthController {
     await newUser.save();
 
     const tokenObj = utils.issueJWT(newUser);
-    return new ApiResponse(res, { message: "", 
+    return sendResponse(res, { message: "", 
       data: { 
         user: newUser, 
         token: tokenObj.token, 

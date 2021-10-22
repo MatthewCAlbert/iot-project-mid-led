@@ -18,7 +18,7 @@ describe("Auth Activity", () => {
     let token = "";
     beforeAll(async () => {
         connection = await connect();
-    });
+    }, 5000);
     afterAll(()=>{
         connection.close();
     })
