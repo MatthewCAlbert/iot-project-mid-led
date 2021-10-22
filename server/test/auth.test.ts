@@ -12,8 +12,9 @@ describe("Auth Activity", () => {
     const userData = {
         name: nanoid(),
         username: nanoid(),
-        password: "LLoLVdgCw1T^K5-7"
+        password: "oldpass12345"
     };
+    const newPassword = "newpass12345";
     let connection: Connection = undefined;
     let token = "";
     beforeAll(async () => {
@@ -68,6 +69,33 @@ describe("Auth Activity", () => {
             expect(name).toMatch(userData.name);
             done();
         } );
+
+    });
+
+    // Test change password
+    it("Change user password", (done) => {
+    
+        request.put('/api/v1/auth/change-password').set("Authorization",`${token}`).send({
+            oldPassword: userData?.password,
+            newPassword: newPassword,
+            rePassword: newPassword,
+        }).then( response => {
+            expect(response.status).toBe(200);
+            done();
+        });
+
+    });
+
+    // Test login using new password
+    it("Login using new password", (done) => {
+    
+        request.post('/api/v1/auth/login').send({
+            username: userData?.username,
+            password: newPassword
+        }).then( response => {
+            expect(response.status).toBe(200);
+            done();
+        });
 
     });
 

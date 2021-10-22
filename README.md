@@ -14,11 +14,14 @@
 ```
 
 ## TODO
+- [x] Seperate service from controller (unlock unit test)
+- [ ] Frontend
 - [ ] Setup env pas build docker
 - [ ] Scheduler
 - [ ] Schedule API
-- [ ] Test TypeORM migration build automation
-- [x] Unit Testing
+- [ ] TypeORM migration deployment automation
+- [x] Mini Unit Test
+- [x] Endpoint Testing
 
 ## Getting Started
 - Too many CLI command (just read the package.json)
