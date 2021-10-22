@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: ["README.md", "embedded/**"]
+    
+  pull_request:
+    branches: [ main ]
+    paths-ignore: ["README.md", "embedded/**"]
+
+env:
+  NODE_ENV: "development"
+  JWT_SECRET: "secret"
+  JWT_ACCESS_EXPIRATION: "1d"
+
+jobs:
+  test-node:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - uses: c-hive/gha-yarn-cache@v2
+
+      - name: Install JS dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Prepare Environment
+        uses: CallePuzzle/envvar-to-dotenv-action@v1.0.0
+        with:
+          variableNames: NODE_ENV,JWT_SECRET,JWT_ACCESS_EXPIRATION
+
+      - name: Test
+        run: yarn run test --if-present
+
+      - name: Build
+        run: |
+          yarn run build

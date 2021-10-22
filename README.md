@@ -18,7 +18,7 @@
 - [ ] Scheduler
 - [ ] Schedule API
 - [ ] Test TypeORM migration build automation
-- [ ] Unit Testing
+- [x] Unit Testing
 
 ## Getting Started
 - Too many CLI command (just read the package.json)
