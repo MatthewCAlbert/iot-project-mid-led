@@ -1,8 +1,6 @@
 import express from "express";
 import httpStatus from "http-status";
 import { User } from "../data/entities/user.entity";
-import utils from '../utils/jwt';
-import ApiError from "../utils/ApiError";
 import {sendResponse} from "../utils/api";
 import { changePasswordService, getUserProfileService, loginService, registerUserService } from "../services/auth.service";
 

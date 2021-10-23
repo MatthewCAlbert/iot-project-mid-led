@@ -1,7 +1,6 @@
 "use strict";
 
 import "reflect-metadata";
-import path from "path";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -13,6 +12,10 @@ import ApiError from "./utils/ApiError";
 import httpStatus from "http-status";
 import { errorConverter, errorHandler } from "./middlewares/error.middleware";
 import config from "./config/config";
+import path from "path";
+import chalk from "chalk";
+
+// console.log(chalk.yellowBright(`[DEBUG]: ${__dirname}`))
 
 const app = express();
 
@@ -45,13 +48,13 @@ app.options("*", (req, res)=>{
 app.use("/", router);
 
 // Attach public folder
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Allow reverse proxy
 app.set("trust proxy", true);
 
 // Initialize views using EJS
-app.set("views", path.join(__dirname, "../src/views"));
+app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", require("./ejs-extended"));
 
 // Handle Not Found

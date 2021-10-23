@@ -3,7 +3,7 @@
  * https://jestjs.io/docs/configuration
  */
 
-export default {
+module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -60,11 +60,11 @@ export default {
   // globalTeardown: undefined,
 
   // A set of global variables that need to be available in all test environments
-  globals: {
-      "ts-jest": {
-          tsconfig: "tsconfig.json"
-      }
-  },
+  // globals: {
+  //     "ts-jest": {
+  //         tsconfig: "tsconfig.json"
+  //     }
+  // },
 
   // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
   // maxWorkers: "50%",
@@ -75,18 +75,13 @@ export default {
   // ],
 
   // An array of file extensions your modules use
-  moduleFileExtensions: [
-      "ts",
-      "js"
-  ],
+  moduleFileExtensions: ["js"],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   // moduleNameMapper: {},
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  modulePathIgnorePatterns: [
-    //   "auth.test.ts"
-  ],
+  modulePathIgnorePatterns: [],
 
   // Activates notifications for test results
   // notify: false,
@@ -95,7 +90,7 @@ export default {
   // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  preset: 'ts-jest',
+  preset: "ts-jest",
 
   // Run tests from one or more projects
   // projects: undefined,
@@ -148,9 +143,7 @@ export default {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: [
-      "**/tests/**/*.test.(ts)"
-  ],
+  testMatch: ["**/tests/**/*.test.(js)"],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
@@ -173,9 +166,9 @@ export default {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  transform: {
-        "^.+\\.(ts|tsx)$": "ts-jest"
-    },
+  // transform: {
+  //   "^.+\\.(ts|tsx)$": "ts-jest",
+  // },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [

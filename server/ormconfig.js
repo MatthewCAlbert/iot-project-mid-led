@@ -30,6 +30,12 @@ const ormConfig = {
     cli: cliConfig,
     name: "production",
   },
+  posttesting: {
+    ...defaultConfig,
+    ...distLocation,
+    cli: cliConfig,
+    name: "posttesting",
+  },
   testing: {
     ...defaultConfig,
     ...devLocation,

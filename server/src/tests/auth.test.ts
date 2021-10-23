@@ -1,8 +1,8 @@
 import { nanoid } from "nanoid";
-import { connect } from "../src/config/database";
+import { connect } from "../config/database";
 import supertest from "supertest";
-import app from "../src/app";
-import { User } from "../src/data/entities/user.entity";
+import app from "../app";
+import { User } from "../data/entities/user.entity";
 import { Connection } from "typeorm";
 
 jest.setTimeout(1000);
