@@ -15,8 +15,8 @@
 
 ## TODO
 - [x] Seperate service from controller (unlock unit test)
+- [ ] Docker Image Ready
 - [ ] Frontend
-- [ ] Setup env pas build docker
 - [ ] Scheduler
 - [ ] Schedule API
 - [ ] TypeORM migration deployment automation
