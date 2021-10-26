@@ -7,19 +7,36 @@
 #include <AsyncElegantOTA.h>
 #include <elapsedMillis.h>
 
+/**
+ *  OTA: IP/upload
+ * 
+ * MQTT REQUEST on "es/command" topic:
+ * {
+      "state":"ON", <ON | OFF>
+      "color":{ 
+        "r":50, <intensity in %>
+        "g":20,
+        "b":70
+      }
+    }
+ * 
+ * 
+ **/
+
 const char *deviceId = "uuidv4";
 #include "secret.h"
 
-const uint8_t led[3]={D5, D8, D7};
+const uint8_t led[3]={D8, D5, D7};
 const uint8_t common = D6;
+const int BUFFER_SIZE = JSON_OBJECT_SIZE(20);
 
 // MQTT Client
 WiFiClient espClient;
 PubSubClient mqttClient(espClient);
 AsyncWebServer server(80);
 
-elapsedSeconds second;
-int pos;
+bool state=false;
+byte r=0,g=0,b=0;
 
 unsigned long currentTime_ms;
 
@@ -81,6 +98,72 @@ void sendMqttPublishData()
   }
 }
 
+
+void runOTA(){
+  AsyncElegantOTA.begin(&server);
+  server.begin();
+}
+
+bool processJson(char* message) {
+  StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
+
+  JsonObject& root = jsonBuffer.parseObject(message);
+
+  if (!root.success()) {
+    Serial.println("parseObject() failed");
+    return false;
+  }
+
+  if (root.containsKey("state")) {
+    if (strcmp(root["state"], "ON") == 0) {
+      state = true;
+    }
+    else if (strcmp(root["state"], "OFF") == 0) {
+      state = false;
+    }
+  }
+
+  if (root.containsKey("color")) {
+    r= root["color"]["r"];
+    g= root["color"]["g"];
+    b= root["color"]["b"];
+  }else{
+    r = g=b=100;
+  }
+
+  return true;
+}
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+
+  char data [length+1];
+  for (int i=0;i<length;i++) {
+    data[i] = (char)payload[i];
+  }
+  data[length]='\0';
+  Serial.println(data);
+  Serial.println();
+
+  if (!processJson(data)) {
+    return;
+  }
+
+  if(state){
+    analogWrite(led[0], map(r,0,100,255,0));
+    analogWrite(led[1], map(g,0,100,255,0));
+    analogWrite(led[2], map(b,0,100,255,0));
+  }else{
+    analogWrite(led[0], 255);
+    analogWrite(led[1], 255);
+    analogWrite(led[2], 255);
+  }
+
+}
+
+
 void reconnect(bool first = false, bool force = false)
 {
   //Attempt connect again
@@ -117,16 +200,13 @@ void reconnect(bool first = false, bool force = false)
     if (first)
     {
       mqttClient.setServer(mqtt_server, 1883);
-      mqttClient.setCallback(NULL);
+      mqttClient.setCallback(callback);
       mqttClient.setBufferSize(4096);
     }
   }
 }
 
-void runOTA(){
-  AsyncElegantOTA.begin(&server);
-  server.begin();
-}
+
 
 void setup()
 {
@@ -134,27 +214,19 @@ void setup()
   reconnect(true);
   mqttReconnect();
   runOTA();
-
+  analogWriteRange(255);
   pinMode(common, OUTPUT);
   digitalWrite(common,HIGH);
   for(int i=0;i<3;i++){
     pinMode(led[i], OUTPUT);
-    digitalWrite(led[i],LOW);
+    digitalWrite(led[i],HIGH);
   }
 }
 
+
+
 void loop()
 {
-
-  if(second >=2){
-    digitalWrite(led[pos],LOW);
-    if(pos == 0)digitalWrite(led[2],HIGH);
-    else digitalWrite(led[pos-1],HIGH);
-    pos++;
-    pos = pos%3;
-    second=0;
-  }
-
   currentTime_ms = millis();
 
   if (mqttClient.connected())
