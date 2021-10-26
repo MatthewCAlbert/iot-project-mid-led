@@ -2,13 +2,24 @@
 #include "ESP8266WiFi.h"
 #include <ArduinoJson.h>
 #include <PubSubClient.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
+#include <elapsedMillis.h>
 
 const char *deviceId = "uuidv4";
 #include "secret.h"
 
+const uint8_t led[3]={D5, D8, D7};
+const uint8_t common = D6;
+
 // MQTT Client
 WiFiClient espClient;
 PubSubClient mqttClient(espClient);
+AsyncWebServer server(80);
+
+elapsedSeconds second;
+int pos;
 
 unsigned long currentTime_ms;
 
@@ -112,15 +123,42 @@ void reconnect(bool first = false, bool force = false)
   }
 }
 
+void runOTA(){
+  AsyncElegantOTA.begin(&server);
+  server.begin();
+}
+
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
+  reconnect(true);
+  mqttReconnect();
+  runOTA();
+
+  pinMode(common, OUTPUT);
+  digitalWrite(common,HIGH);
+  for(int i=0;i<3;i++){
+    pinMode(led[i], OUTPUT);
+    digitalWrite(led[i],LOW);
+  }
 }
 
 void loop()
 {
+
+  if(second >=2){
+    digitalWrite(led[pos],LOW);
+    if(pos == 0)digitalWrite(led[2],HIGH);
+    else digitalWrite(led[pos-1],HIGH);
+    pos++;
+    pos = pos%3;
+    second=0;
+  }
+
   currentTime_ms = millis();
 
   if (mqttClient.connected())
     mqttClient.loop();
+
+  AsyncElegantOTA.loop();
 }
