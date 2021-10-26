@@ -14,7 +14,7 @@
  * {
       "state":"ON", <ON | OFF>
       "color":{ 
-        "r":50, <intensity in %>
+        "r":50, <intensity in byte value (0-255)>
         "g":20,
         "b":70
       }
@@ -152,9 +152,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 
   if(state){
-    analogWrite(led[0], map(r,0,100,255,0));
-    analogWrite(led[1], map(g,0,100,255,0));
-    analogWrite(led[2], map(b,0,100,255,0));
+    analogWrite(led[0], map(r,0,255,255,0));
+    analogWrite(led[1], map(g,0,255,255,0));
+    analogWrite(led[2], map(b,0,255,255,0));
   }else{
     analogWrite(led[0], 255);
     analogWrite(led[1], 255);
