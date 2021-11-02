@@ -16,6 +16,6 @@ export class User extends BaseEntity {
     @Column()
     salt: string;
 
-    @OneToMany(() => Schedule, schedule => schedule.user_id)
+    @OneToMany(() => Schedule, schedule => schedule.user)
     schedules: Schedule[];
 }

@@ -15,11 +15,11 @@ const apiRoutes = [
     version: "1",
     router: authRoute,
   },
-  // {
-  //   path: 'schedule',
-  //   version: "1",
-  //   router: scheduleRouter,
-  // }
+  {
+    path: 'schedule',
+    version: "1",
+    router: scheduleRouter,
+  }
 ];
 
 const webRoutes = [

@@ -5,7 +5,7 @@ import { User } from "./user.entity";
 @Entity()
 export class Schedule extends BaseEntity {
     @ManyToOne(() => User, user => user.schedules)
-    user_id: string;
+    user: string;
 
     @Column()
     name: string;

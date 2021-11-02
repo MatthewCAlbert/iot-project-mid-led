@@ -15,11 +15,12 @@
 
 ## TODO
 - [x] Seperate service from controller (unlock unit test)
-- [ ] Docker Image Ready
+- [x] Docker Image Ready
+- [x] Frontend Endpoint
 - [ ] Frontend
 - [ ] Scheduler
 - [ ] Schedule API
-- [ ] TypeORM migration deployment automation
+- [ ] TypeORM migration deployment automation (optional)
 - [x] Mini Unit Test
 - [x] Endpoint Testing
 
