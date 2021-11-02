@@ -21,7 +21,7 @@ COPY --from=deps /app/node_modules ./node_modules
 RUN yarn build
 
 
-FROM node:14-allpine AS runner
+FROM node:14-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
