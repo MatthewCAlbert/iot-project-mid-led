@@ -4,7 +4,8 @@ import ApiError from "../utils/ApiError";
 import { sendResponse } from "../utils/api";
 import httpStatus from "http-status";
 import { Schedule } from "../data/entities/schedule.entity";
-import { createQueryBuilder } from "typeorm";
+import { cancelScheduledCommand, scheduleCommand } from "../config/scheduler";
+import config from "../config/config";
 
 class ApiController{
   static helloWorldHandler(req: express.Request, res: express.Response) {
@@ -73,6 +74,8 @@ class ApiController{
 
       const savedSchedule = await newSchedule.save();
 
+      scheduleCommand(req?.mqtt, savedSchedule);
+
       return sendResponse(res, {
         data: savedSchedule,
         message: 'New Schedule Success'
@@ -88,11 +91,25 @@ class ApiController{
 
       await Schedule.delete({id});
 
+      if( !config.env.match('testing') )
+        cancelScheduledCommand(id);
+
       return sendResponse(res, {
         message: 'Delete Schedule Success'
       })
     } catch (error) {
       next(error)
+    }
+  }
+
+  static async sendCommand(req: express.Request, res: express.Response, next: express.NextFunction){
+    try {
+      req?.mqtt?.sendCommand(req?.body?.command);
+      return sendResponse(res, {
+        message: 'Schedule Success'
+      });
+    } catch (error) {
+      next(error);
     }
   }
 

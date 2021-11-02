@@ -1,14 +1,15 @@
 "use strict";
 
-import app from "./app";
+import app, { mqttClient } from "./app";
 import { connect } from "./config/database";
+import { scheduleOnStartup } from "./config/scheduler";
 import logger from "./utils/logger";
 
 /**
  * Start Express server.
  */
 
-const server = app.listen(app.get("port"), () => {
+const server = app.listen(app.get("port"), async () => {
     console.log(
         "  App is running at http://localhost:%d in %s mode",
         app.get("port"),
@@ -16,7 +17,11 @@ const server = app.listen(app.get("port"), () => {
     );
     console.log("  Press CTRL-C to stop\n");
 
-    connect();
+    await connect();
+    if( mqttClient ){
+      console.log("MQTT Client found, starting scheduler...");
+      await scheduleOnStartup(mqttClient);
+    }
 });
 
 /**

@@ -50,12 +50,10 @@ class MqttHandler {
     });
   }
 
-  sendCommand(command: string) {
+  sendCommand( command: {state: "ON"|"OFF", color: { r: number, g: number, b: number }} ) {
     return this.mqttClient.publish(
       "es/command",
-      JSON.stringify({
-        command: command,
-      })
+      JSON.stringify(command)
     );
   }
 }
