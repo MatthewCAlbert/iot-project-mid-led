@@ -29,7 +29,7 @@ module.exports = {
   coveragePathIgnorePatterns: [
     "\\\\node_modules\\\\",
     "ejs-extended.js",
-    "\\migrations\\"
+    "\\\\migrations\\\\"
   ],
 
   // Indicates which provider should be used to instrument code for coverage
