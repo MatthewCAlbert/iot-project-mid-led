@@ -1,7 +1,8 @@
 ARG BUILD_ENV
 
 FROM node:alpine AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --update python make g++\
+   && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
