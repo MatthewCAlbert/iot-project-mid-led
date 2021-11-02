@@ -18,8 +18,9 @@
 - [x] Docker Image Ready
 - [x] Frontend Endpoint
 - [ ] Frontend
-- [ ] Scheduler
-- [ ] Schedule API
+- [x] Scheduler
+- [x] Schedule API
+- [ ] Actually tested with device
 - [ ] TypeORM migration deployment automation (optional)
 - [x] Mini Unit Test
 - [x] Endpoint Testing

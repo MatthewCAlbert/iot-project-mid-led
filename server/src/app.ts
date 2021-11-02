@@ -14,6 +14,7 @@ import { errorConverter, errorHandler } from "./middlewares/error.middleware";
 import config from "./config/config";
 import path from "path";
 import chalk from "chalk";
+import mqttBinder from "./middlewares/mqttbinder.middleware";
 
 // console.log(chalk.yellowBright(`[DEBUG]: ${__dirname}`))
 
@@ -33,10 +34,14 @@ app.use(cors(corsOptions("*")))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// TODO: Currently disabled
+let mqttClient: MqttHandler = undefined;
+
 // MQTT Client
-// const mqttClient = new MqttHandler();
-// mqttClient.connect();
+if( !config.env.match('testing') ){
+    mqttClient = new MqttHandler();
+    mqttClient.connect();
+}
+export {mqttClient};
 
 // Handle Preflight
 // app.options("*", cors());
@@ -45,6 +50,7 @@ app.options("*", (req, res)=>{
 });
 
 // Define Routes
+app.use(mqttBinder(mqttClient));
 app.use("/", router);
 
 // Attach public folder
