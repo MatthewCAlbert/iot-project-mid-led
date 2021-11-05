@@ -3,7 +3,6 @@
 import "reflect-metadata";
 import express from "express";
 import cors from "cors";
-import helmet from "helmet";
 import compression from "compression";
 import MqttHandler from "./config/mqtt";
 import { corsOptions } from "./config/cors";
@@ -28,7 +27,6 @@ app.set("port", (
 app.set("env", config.env);
 
 // Middleware
-app.use(helmet())
 app.use(compression())
 app.use(cors(corsOptions("*")))
 app.use(express.json());

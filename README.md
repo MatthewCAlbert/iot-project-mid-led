@@ -17,10 +17,10 @@
 - [x] Seperate service from controller (unlock unit test)
 - [x] Docker Image Ready
 - [x] Frontend Endpoint
-- [ ] Frontend
+- [x] Frontend
 - [x] Scheduler
 - [x] Schedule API
-- [ ] Actually tested with device
+- [x] Actually tested with device
 - [ ] TypeORM migration deployment automation (optional)
 - [x] Mini Unit Test
 - [x] Endpoint Testing
