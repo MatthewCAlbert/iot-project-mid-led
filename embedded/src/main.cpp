@@ -152,13 +152,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 
   if(state){
-    analogWrite(led[0], map(r,0,255,255,0));
-    analogWrite(led[1], map(g,0,255,255,0));
-    analogWrite(led[2], map(b,0,255,255,0));
+    // analogWrite(led[0], map(r,0,255,255,0));
+    // analogWrite(led[1], map(g,0,255,255,0));
+    // analogWrite(led[2], map(b,0,255,255,0));
+    digitalWrite(led[1],0);
   }else{
-    analogWrite(led[0], 255);
-    analogWrite(led[1], 255);
-    analogWrite(led[2], 255);
+    digitalWrite(led[1],1);
+    // analogWrite(led[0], 255);
+    // analogWrite(led[1], 255);
+    // analogWrite(led[2], 255);
   }
 
 }
