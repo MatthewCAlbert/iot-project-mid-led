@@ -1,9 +1,6 @@
 version: "3.3"
 services:
   fullstack:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: ghcr.io/matthewcalbert/iot-project-mid-led:latest
     container_name: iot-project-mid-led
     volumes:
